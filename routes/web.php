@@ -21,6 +21,10 @@ Route::view('kids', 'kids.index')
     ->middleware(['auth', 'verified'])
     ->name('kids.index');
 
+Route::view('kids/create', 'kids.create')
+    ->middleware(['auth', 'verified'])
+    ->name('kids.create');
+
 Route::get('/kids/{id}', function($id) {
     return view('kids.edit')
         ->with('kid', Kid::findOrFail($id));
