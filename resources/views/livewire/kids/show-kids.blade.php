@@ -1,8 +1,17 @@
 <?php
 
 use Livewire\Volt\Component;
+use App\Models\Kid;
 
 new class extends Component {
+    public function delete($kidId)
+    {
+        $kid = Kid::find($kidId);
+        $kid->delete();
+        session()->flash('message', 'Kid was deleted successfully.');
+        redirect()->route('kids.index');
+    }
+
     public function with() : array
     {
         return [
@@ -35,7 +44,8 @@ new class extends Component {
                     <td class="whitespace-nowrap px-6 py-4 font-medium">{{ $kid->id }}</td>
                     <td class="whitespace-nowrap px-6 py-4">{{ $kid->name }}</td>
                     <td class="whitespace-nowrap px-6 py-4 text-right">
-                        <x-red-button type="button">
+
+                        <x-red-button type="button" wire:click="delete('{{ $kid->id }}')" wire:confirm="Are you sure you want to delete this kid?">
                             <img src="{{ asset('/icons/x-circle.svg') }}" class="mr-1 h-5 w-5" alt="Delete">
                             Delete
                         </x-red-button>
