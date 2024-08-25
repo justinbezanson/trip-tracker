@@ -32,6 +32,22 @@ Route::get('/kids/{id}', function($id) {
     ->middleware(['auth', 'verified'])
     ->name('kids.edit');
 
+//-------------------------
+//TRIPS
+//-------------------------
+
+Route::view('trips/create', 'trips.create')
+    ->middleware(['auth', 'verified'])
+    ->name('trips.create');
+
+Route::get('/trip/{id}', function($id) {
+    return view('trip.edit')
+        ->with('trip', Kid::findOrFail($id));
+})
+    ->middleware(['auth', 'verified'])
+    ->name('trip.edit');
+
+
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
