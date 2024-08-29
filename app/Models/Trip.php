@@ -18,8 +18,8 @@ class Trip extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function kid()
+    public function kids()
     {
-        return $this->hasOne(Kid::class);
+        return $this->belongsToMany(Kid::class, 'trips_kids');
     }
 }

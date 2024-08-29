@@ -13,9 +13,17 @@ Route::get('/', function() {
     return view('welcome');
 });
 
-Route::view('dashboard', 'dashboard')
+Route::get('/dashboard', function() {
+    $trips = Auth::user()->trips()->get();
+
+    return view('dashboard', [ 'trips' => $trips ]);
+})
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+// Route::view('dashboard', 'dashboard')
+//     ->middleware(['auth', 'verified'])
+//     ->name('dashboard');
 
 Route::view('kids', 'kids.index')
     ->middleware(['auth', 'verified'])

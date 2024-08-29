@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use App\Models\Kid;
+use App\Models\Trip;
 use Illuminate\Support\Collection;
 
 new class extends Component {
@@ -18,7 +19,7 @@ new class extends Component {
      */
     public function mount(): void
     {
-        $this->name = '';
+        $this->date = '';
         $this->where = '';
         $this->who = '';
 
@@ -26,15 +27,30 @@ new class extends Component {
     }
 
     public function createTrip(): void
-    {
-        // $validated = $this->validate([
-        //     'name' => ['required', 'string', 'max:255'],
-        // ]);
+    {        
+        $validated = $this->validate([
+            'date' => ['required', 'date:Y-m-d'],
+            'where' => ['required', 'string', 'max:255'],
+        ]);
 
-        // Auth::user()->kids()->create($validated);
+        if(empty($this->selectedKids)) {
+            $this->addError('who', __('Please select at least one kid.'));
+        }
 
-        // session()->flash('message', 'Kid was created.');
-        // redirect()->route('kids.index');
+        $trip = new Trip([
+            'when' => $this->date,
+            'where' => $this->where,
+            'user_id' => Auth::user()->id,
+        ]);
+
+        $trip->save();
+
+        foreach($this->selectedKids as $kid) {
+            $trip->kids()->attach($kid,);
+        }
+
+        session()->flash('message', 'Trip was created.');
+        redirect()->route('dashboard');
     }
 
     public function addKid()
@@ -72,7 +88,7 @@ new class extends Component {
     <form wire:submit="createTrip" class="mt-6 space-y-6">
         <div>
             <x-input-label for="date" :value="__('Date')" />
-            <x-text-input wire:model="date" id="date" name="date" type="date" class="mt-1 block w-full" required autofocus autocomplete="date" />
+            <x-text-input wire:model="date" id="date" name="date" type="date" class="mt-1 block w-full" autofocus autocomplete="date" />
             <x-input-error class="mt-2" :messages="$errors->get('date')" />
         </div>
 
@@ -82,8 +98,6 @@ new class extends Component {
                 wire:model="where" 
                 id="where" name="where" 
                 type="text" class="mt-1 block w-full" 
-                required 
-                autofocus 
                 autocomplete="where" 
                 wire:change="whereSearch(this.value)"
             />
@@ -97,8 +111,6 @@ new class extends Component {
                 id="who" 
                 name="who" 
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                required 
-                autofocus
                 wire:change="addKid()"
             >
                 <option value="">{{ __('Select a kid...') }}</option>
