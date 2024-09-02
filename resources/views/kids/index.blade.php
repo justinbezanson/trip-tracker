@@ -23,7 +23,7 @@
                     </x-primary-button>
                 </div>
 
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+                <div class="pt-6 text-gray-900 dark:text-gray-100">
                     <livewire:kids.show-kids />
                 </div>
             </div>
