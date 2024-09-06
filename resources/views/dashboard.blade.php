@@ -38,6 +38,7 @@
                     <thead class="border-b border-t border-neutral-200 font-medium dark:border-white/10 bg-cyan-700 text-white">
                         <tr>
                             <th width="100" class="px-6 py-4">ID</th>
+                            <th class="px-6 py-4">When</th>
                             <th class="px-6 py-4">Where</th>
                             <th class="px-6 py-4">Who</th>
                             <th width="250" class="px-6 py-4">Actions</th>
@@ -52,6 +53,7 @@
                             @endif
                                 <td class="whitespace-nowrap px-6 py-4 font-medium">{{$trip->id}}</td>
                                 <td class="whitespace-nowrap px-6 py-4">{{$trip->when}}</td>
+                                <td class="whitespace-nowrap px-6 py-4">{{$trip->where}}</td>
                                 <td>
                                     @foreach($trip->kids as $kid)
                                         <livewire:pill :key="$kid->id" :id="$kid->id" :name="$kid->name" :remove="false" />

@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 use Livewire\Volt\Component;
 use App\Models\Kid;
@@ -11,6 +11,7 @@ new class extends Component {
     public string $who = '';
     public Collection $kids;
     public array $selectedKids = [];
+    public Collection $whereResults;
 
     protected $listeners = ['tagRemoved' => 'tagRemoved'];
 
@@ -20,10 +21,12 @@ new class extends Component {
     public function mount(): void
     {
         $this->date = '';
-        $this->where = '';
+        $this->where = '';  
         $this->who = '';
+        $this->whereResults = new Collection();
 
         $this->kids = Kid::all()->pluck('name', 'id');
+        $this->whereResults = Trip::groupBy('where')->pluck('where');
     }
 
     public function createTrip(): void
@@ -62,11 +65,6 @@ new class extends Component {
         $this->who = '';
     }
 
-    public function whereSearch($value)
-    {
-        //do search
-    }
-
     public function tagRemoved(string $id)
     {
         $this->selectedKids = array_diff($this->selectedKids, [$id]);
@@ -98,9 +96,20 @@ new class extends Component {
                 wire:model="where" 
                 id="where" name="where" 
                 type="text" class="mt-1 block w-full" 
-                autocomplete="where" 
-                wire:change="whereSearch(this.value)"
+                autocomplete="off"
+                list="whereOptions"
             />
+
+            <datalist id="whereOptions">
+                @foreach($whereResults as $result)
+                    <option
+                        wire:key="{{ $result }}"
+                        data-value="{{ $result }}"
+                        value="{{ $result }}"
+                    ></option>
+                @endforeach
+            </datalist>
+            
             <x-input-error class="mt-2" :messages="$errors->get('where')" />
         </div>
 
