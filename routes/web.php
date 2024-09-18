@@ -18,9 +18,15 @@ Route::get('/', function() {
 Route::get('/dashboard', function() {
     /** @var User $user */
     $user = Auth::user();
-    $trips = Trip::with('kids')->where('user_id', $user->id)->get();//$user->trips()->get();
+    $trips = Trip::with('kids')->where('user_id', $user->id)->get();
+    $kids = Kid::with([
+        'trips' => function ($q) {
+        $q->orderBy('when', 'asc');
+    }])
+        ->orderBy('name', 'asc')
+        ->get();
 
-    return view('dashboard', [ 'trips' => $trips ]);
+    return view('dashboard', [ 'trips' => $trips, 'kids' => $kids ]);
 })
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
