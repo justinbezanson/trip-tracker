@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function() {
-    // if(Auth::user() == null) {
-    //     return redirect()->to('/login');
-    // } else {
-    //     return redirect()->to('/dashboard');
-    // }
+    if(Auth::user() == null) {
+        return redirect()->to('/login');
+    } else {
+        return redirect()->to('/dashboard');
+    }
     return view('welcome');
 });
 
@@ -30,10 +30,6 @@ Route::get('/dashboard', function() {
 })
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
-
-// Route::view('dashboard', 'dashboard')
-//     ->middleware(['auth', 'verified'])
-//     ->name('dashboard');
 
 Route::view('kids', 'kids.index')
     ->middleware(['auth', 'verified'])
