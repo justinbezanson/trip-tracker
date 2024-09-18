@@ -66,7 +66,7 @@
                                         Delete
                                     </x-red-button>
             
-                                    <x-primary-button href="{{ route('trip.edit', $trip->id) }}" type="button" wire:navigate>
+                                    <x-primary-button href="{{ route('trips.edit', $trip->id) }}" type="button" wire:navigate>
                                         <img src="{{ asset('/icons/x-circle.svg') }}" class="mr-1 h-5 w-5" alt="Edit">
                                         Edit
                                     </x-primary-button>

@@ -6,6 +6,7 @@ use App\Models\Trip;
 use Illuminate\Support\Collection;
 
 new class extends Component {
+    public Trip $trip;
     public string $date = '';
     public string $where = '';
     public string $who = '';
@@ -18,11 +19,17 @@ new class extends Component {
     /**
      * Mount the component.
      */
-    public function mount(): void
+    public function mount(Trip $trip): void
     {
-        $this->date = '';
-        $this->where = '';  
+        $this->trip = $trip;
+        $this->date = $trip->when;
+        $this->where = $trip->where;
         $this->who = '';
+
+        foreach($trip->kids as $kid) {
+            $this->selectedKids[] = $kid->id;
+        }
+
         $this->whereResults = new Collection();
 
         $this->kids = Kid::all()->pluck('name', 'id');
@@ -31,7 +38,7 @@ new class extends Component {
         $this->whereResults = Trip::groupBy('where')->pluck('where');
     }
 
-    public function createTrip(): void
+    public function updateTrip(): void
     {        
         $validated = $this->validate([
             'date' => ['required', 'date:Y-m-d'],
@@ -42,19 +49,17 @@ new class extends Component {
             $this->addError('who', __('Please select at least one kid.'));
         }
 
-        $trip = new Trip([
-            'when' => $this->date,
-            'where' => $this->where,
-            'user_id' => Auth::user()->id,
-        ]);
+        $this->trip->when = $this->date;
+        $this->trip->where = $this->where;
+        $this->trip->user_id = Auth::user()->id;
+        $this->trip->save();
 
-        $trip->save();
-
+        $this->trip->kids()->detach();
         foreach($this->selectedKids as $kid) {
-            $trip->kids()->attach($kid,);
+            $this->trip->kids()->attach($kid);
         }
 
-        session()->flash('message', 'Trip was created.');
+        session()->flash('message', 'Trip was updated.');
         redirect()->route('dashboard');
     }
 
@@ -85,7 +90,7 @@ new class extends Component {
         </p>
     </header>
 
-    <form wire:submit="createTrip" class="mt-6 space-y-6">
+    <form wire:submit="updateTrip" class="mt-6 space-y-6">
         <div>
             <x-input-label for="date" :value="__('Date')" />
             <x-text-input wire:model="date" id="date" name="date" type="date" class="mt-1 block w-full" autofocus autocomplete="date" />

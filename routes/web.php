@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Kid;
+use App\Models\Trip;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -14,7 +16,9 @@ Route::get('/', function() {
 });
 
 Route::get('/dashboard', function() {
-    $trips = Auth::user()->trips()->get();
+    /** @var User $user */
+    $user = Auth::user();
+    $trips = Trip::with('kids')->where('user_id', $user->id)->get();//$user->trips()->get();
 
     return view('dashboard', [ 'trips' => $trips ]);
 })
@@ -48,12 +52,12 @@ Route::view('trips/create', 'trips.create')
     ->middleware(['auth', 'verified'])
     ->name('trips.create');
 
-Route::get('/trip/{id}', function($id) {
-    return view('trip.edit')
-        ->with('trip', Kid::findOrFail($id));
+Route::get('/trips/{id}', function($id) {
+    return view('trips.edit')
+        ->with('trip', Trip::findOrFail($id));
 })
     ->middleware(['auth', 'verified'])
-    ->name('trip.edit');
+    ->name('trips.edit');
 
 
 Route::view('profile', 'profile')
