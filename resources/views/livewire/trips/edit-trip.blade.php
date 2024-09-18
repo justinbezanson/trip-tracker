@@ -34,7 +34,6 @@ new class extends Component {
 
         $this->kids = Kid::all()->pluck('name', 'id');
 
-        //TODO: use JavaScript to filter the datalist based on the input value
         $this->whereResults = Trip::groupBy('where')->pluck('where');
     }
 
